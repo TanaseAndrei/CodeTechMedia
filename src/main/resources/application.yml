@@ -4,6 +4,7 @@ server:
     context-path: /media
 
 application:
+  version: @project.version@
   base-folder: E:\\Programming\\CodeTechOutput
 
 spring:

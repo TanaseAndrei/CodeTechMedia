@@ -1,6 +1,7 @@
 package com.ucv.media.controller;
 
 import com.ucv.media.controller.exception.AppException;
+import com.ucv.media.controller.swagger.MediaApi;
 import com.ucv.media.facade.MediaFacade;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -15,7 +16,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 @RestController
 @RequestMapping
 @AllArgsConstructor
-public class MediaController {
+public class MediaController implements MediaApi {
 
     private final MediaFacade mediaFacade;
 
