@@ -1,6 +1,5 @@
 package com.ucv.media.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Slf4j
 public class FileService {
 
     private static final String SLASH = File.separator;

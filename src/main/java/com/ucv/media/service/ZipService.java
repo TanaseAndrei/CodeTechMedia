@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class ZipService {
+
     private static final String SLASH = File.separator;
     private static final String ZIP_EXTENSION = ".zip";
 

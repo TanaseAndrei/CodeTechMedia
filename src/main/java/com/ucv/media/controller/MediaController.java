@@ -35,6 +35,7 @@ public class MediaController {
     }
 
     @PostMapping(path = "/folder/{folder}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public String moveFile(@PathVariable("folder") String folder, @RequestParam("file") MultipartFile multipartFile) {
         return mediaFacade.move(folder, multipartFile);
     }
