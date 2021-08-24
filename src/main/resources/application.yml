@@ -5,7 +5,7 @@ server:
 
 application:
   version: @project.version@
-  base-folder: E:\\Programming\\CodeTechOutput
+  base-folder: /home
 
 spring:
   servlet:
