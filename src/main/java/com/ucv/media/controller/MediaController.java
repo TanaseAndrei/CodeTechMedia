@@ -14,7 +14,7 @@ import java.util.List;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 
 @RestController
-@RequestMapping
+@RequestMapping(path = "/media")
 @AllArgsConstructor
 public class MediaController implements MediaApi {
 
@@ -65,7 +65,7 @@ public class MediaController implements MediaApi {
         mediaFacade.deleteFile(folder, filename);
     }
 
-    @DeleteMapping(path = "/folder/{folderName}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/folder/{folderName}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFolder(@PathVariable("folderName") String folderName) {
         mediaFacade.deleteFolder(folderName);
