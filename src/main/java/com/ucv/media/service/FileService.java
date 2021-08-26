@@ -1,6 +1,7 @@
 package com.ucv.media.service;
 
-import org.apache.tomcat.util.http.fileupload.FileUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class FileService {
 
     private static final String SLASH = File.separator;
@@ -52,7 +54,8 @@ public class FileService {
     }
 
     public void deleteFolder(String folder) throws IOException {
-        FileUtils.deleteDirectory(new File(applicationBaseFolder + SLASH + folder));
+        String pathname = applicationBaseFolder + SLASH + folder;
+        FileUtils.deleteDirectory(new File(pathname));
     }
 
     public void deleteFile(String folder, String fileName) throws IOException {
