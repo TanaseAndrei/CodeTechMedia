@@ -81,7 +81,7 @@ public class MediaFacade {
 
     public boolean renameFolder(String oldFolderName, String newFolderName) {
         log.info("Renaming the folder {} to {}", oldFolderName, newFolderName);
-        return fileService.renameFile(oldFolderName, newFolderName);
+        return fileService.renameFolder(oldFolderName, newFolderName);
     }
 
     public void deleteFolder(String folderName) {

@@ -23,11 +23,13 @@ public class ZipService {
     private String applicationBaseFolder;
 
     public Resource zipFiles(List<String> fileNames, String courseName) throws IOException {
+        log.info("Zipping files {} from the folder {}", fileNames, courseName);
         String zipPath = applicationBaseFolder + SLASH + courseName + SLASH + System.currentTimeMillis() + ZIP_EXTENSION;
         try (ZipFile zipFile = new ZipFile(zipPath)) {
             for (String filename : fileNames) {
                 String filePathToZip = applicationBaseFolder + SLASH + courseName + SLASH + filename;
                 zipFile.addFile(filePathToZip);
+                log.info("Adding to zip, the file with the name {}", filePathToZip);
             }
         }
         return new UrlResource(Paths.get(zipPath).toUri());

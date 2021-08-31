@@ -27,30 +27,38 @@ public class FileService {
     private String applicationBaseFolder;
 
     public String createCourseFolder(String courseName) throws IOException {
+        log.info("Creating new course folder with the name {}", courseName);
         if (!Files.exists(Paths.get(applicationBaseFolder + courseName))) {
             Files.createDirectory(Paths.get(applicationBaseFolder + SLASH + courseName));
+            log.info("Created new course folder with the name {}", courseName);
         }
         return courseName;
     }
 
     public String moveFile(String folder, MultipartFile multipartFile) throws IOException {
+        log.info("Moving file with the name {} to the folder {}", multipartFile.getName(), folder);
         byte[] fileBytes = multipartFile.getBytes();
         String newFilename = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         String savedFilePath = applicationBaseFolder + SLASH + folder + SLASH + newFilename;
         Files.write(Paths.get(savedFilePath), fileBytes);
+        log.info("Moved file with the name {} to the folder {}", multipartFile.getName(), folder);
         return newFilename;
     }
 
-    public boolean renameFile(String folder, String newName) {
+    public boolean renameFolder(String folder, String newName) {
+        log.info("Renaming folder from {} to {}", folder, newName);
         File targetFolder = new File(applicationBaseFolder + SLASH + folder);
         File newFolder = new File(applicationBaseFolder + SLASH + newName);
+        log.info("Renamed folder from {} to {}", folder, newFolder);
         return targetFolder.renameTo(newFolder);
     }
 
     public void deleteFiles(String folder, List<String> fileNames) throws IOException {
+        log.info("Deleting files {} from the folder {}", fileNames, folder);
         for (String fileName : fileNames) {
             deleteFile(folder, fileName);
         }
+        log.info("Successfully deleted files {} from the folder {}", fileNames, folder);
     }
 
     public void deleteFolder(String folder) throws IOException {
@@ -60,9 +68,11 @@ public class FileService {
 
     public void deleteFile(String folder, String fileName) throws IOException {
         Files.delete(Paths.get(applicationBaseFolder + SLASH + folder + SLASH + fileName));
+        log.info("Deleted file {} from the folder {}", fileName, folder);
     }
 
     public Resource getFileAsResource(String folder, String fileName) throws MalformedURLException {
+        log.info("Retrieving file {} from the folder {}", fileName, folder);
         Path path = Paths.get(applicationBaseFolder + SLASH + folder + SLASH + fileName);
         return new UrlResource(path.toUri());
     }
