@@ -9,6 +9,8 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
@@ -20,48 +22,52 @@ public class MediaController implements MediaApi {
 
     private final MediaFacade mediaFacade;
 
-    @GetMapping(path = "/{folder}/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> getMedia(@PathVariable("folder") String folder,
-                                             @PathVariable("filename") String filename) {
+    @PostMapping(path = "/folder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createCourseFolder(@RequestBody @Valid @NotEmpty(message = "The name of the folder should not be empty") String courseFolderName) {
+        return mediaFacade.createCourseFolder(courseFolderName);
+    }
+
+    @PostMapping(path = "/folder/{folder}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadFile(@PathVariable("folder") String folder,
+                             @RequestParam("file") MultipartFile multipartFile) {
+        return mediaFacade.move(folder, multipartFile);
+    }
+
+    @GetMapping(path = "/folder/{folder}/file/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> downloadFile(@PathVariable("folder") String folder,
+                                                 @PathVariable("filename") String filename) {
         Resource resource = mediaFacade.getFile(folder, filename);
         MediaType mediaType = getMediaType(resource);
         return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).headers(createHeader(resource)).body(resource);
     }
 
-    @GetMapping(path = "/{folder}/zip-files", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> zipFiles(@PathVariable("folder") String folderName, @RequestBody List<String> fileNames) {
+    @GetMapping(path = "/folder/{folder}/zip-files", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> zipFiles(@PathVariable("folder") String folderName,
+                                             @RequestBody @Valid @NotEmpty(message = "The list of files should not be empty") List<String> fileNames) {
         Resource resource = mediaFacade.zipFiles(folderName, fileNames);
         MediaType mediaType = getMediaType(resource);
         return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).headers(createHeader(resource)).body(resource);
     }
 
-    @PostMapping(path = "/folder/{folder}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public String moveFile(@PathVariable("folder") String folder, @RequestParam("file") MultipartFile multipartFile) {
-        return mediaFacade.move(folder, multipartFile);
-    }
-
-    @PostMapping(path = "/folder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createCourseFolder(@RequestBody String courseFolderName) {
-        return mediaFacade.createCourseFolder(courseFolderName);
-    }
-
-    @PutMapping(path = "/folder/{folderName}/rename", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean renameFolder(@PathVariable("folderName") String oldFolderName, @RequestBody String newFolderName) {
+    @PutMapping(path = "/folder/{folderName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean renameFolder(@PathVariable("folderName") String oldFolderName,
+                                @RequestBody @Valid @NotEmpty(message = "The name of the folder should not be empty") String newFolderName) {
         return mediaFacade.renameFolder(oldFolderName, newFolderName);
     }
 
-    @DeleteMapping(path = "/{folder}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/folder/{folder}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFiles(@PathVariable("folder") String folder, @RequestBody List<String> fileNames) {
+    public void deleteFiles(@PathVariable("folder") String folder,
+                            @RequestBody @Valid @NotEmpty(message = "The list of files should not be empty") List<String> fileNames) {
         mediaFacade.deleteFiles(folder, fileNames);
     }
 
-    @DeleteMapping(path = "/{folder}/{filename}")
+    @DeleteMapping(path = "/folder/{folder}/file/{filename}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMedia(@PathVariable("folder") String folder,
-                            @PathVariable("filename") String filename) {
+    public void deleteFile(@PathVariable("folder") String folder,
+                           @PathVariable("filename") String filename) {
         mediaFacade.deleteFile(folder, filename);
     }
 

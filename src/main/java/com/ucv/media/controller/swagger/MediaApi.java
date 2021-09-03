@@ -24,9 +24,9 @@ public interface MediaApi {
             @ApiResponse(code = 200, message = "Successfully downloaded the file", response = Resource.class),
             @ApiResponse(code = 500, message = "Internal server error", response = void.class)
     })
-    ResponseEntity<Resource> getMedia(@Valid @NotEmpty(message = "The target folder should not be null or empty")
+    ResponseEntity<Resource> downloadFile(@Valid @NotEmpty(message = "The target folder should not be null or empty")
                                       @Schema(description = "The target folder", example = "Java101") String folder,
-                                      @Valid @NotEmpty(message = "The filename should not be null or empty")
+                                          @Valid @NotEmpty(message = "The filename should not be null or empty")
                                       @Schema(description = "The target file", example = "12n3o4-12o3ipv-o1i2c321323r.jpg") String filename);
 
     @ApiOperation(value = "Downloads the zip containing the targeted files", httpMethod = "GET",
@@ -47,9 +47,9 @@ public interface MediaApi {
                     response = String.class),
             @ApiResponse(code = 500, message = "Internal server error", response = void.class)
     })
-    String moveFile(@Valid @NotEmpty(message = "The target folder should not be null or empty")
+    String uploadFile(@Valid @NotEmpty(message = "The target folder should not be null or empty")
                     @Schema(description = "The target folder", example = "Java101") String folder,
-                    @Valid @NotNull(message = "The file should not be null")
+                      @Valid @NotNull(message = "The file should not be null")
                     @Schema(description = "The file") MultipartFile multipartFile);
 
     @ApiOperation(value = "Creates a new folder and returns the name of it", httpMethod = "POST",
@@ -88,9 +88,9 @@ public interface MediaApi {
             @ApiResponse(code = 204, message = "Deleted the given files", response = void.class),
             @ApiResponse(code = 500, message = "Internal server error", response = void.class)
     })
-    void deleteMedia(@Valid @NotEmpty(message = "The name of the folder should not be null or empty")
+    void deleteFile(@Valid @NotEmpty(message = "The name of the folder should not be null or empty")
                      @Schema(description = "The target folder", example = "Java101") String folder,
-                     @Valid @NotEmpty(message = "The name of the file should not be null or empty")
+                    @Valid @NotEmpty(message = "The name of the file should not be null or empty")
                      @Schema(description = "The target filename", example = "Java101") String filename);
 
     @ApiOperation(value = "Delete the given files from a targeted folder", httpMethod = "DELETE")

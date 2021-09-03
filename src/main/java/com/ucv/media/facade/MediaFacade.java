@@ -59,9 +59,7 @@ public class MediaFacade {
     public String createCourseFolder(String courseFolderName) {
         try {
             log.info("Creating a new folder for the course {}", courseFolderName);
-            String courseFolder = fileService.createCourseFolder(courseFolderName);
-            log.info("Created a new folder with the name {}", courseFolderName);
-            return courseFolder;
+            return fileService.createCourseFolder(courseFolderName);
         } catch (IOException ioException) {
             log.error("Error while creating a new folder for the course {}", courseFolderName, ioException);
             throw new AppException(ioException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -97,6 +95,7 @@ public class MediaFacade {
 
     public String move(String folder, MultipartFile multipartFile) {
         try {
+            checkFile(multipartFile);
             log.info("Moving the file {} to the folder {}", multipartFile.getName(), folder);
             String fileName = fileService.moveFile(folder, multipartFile);
             log.info("Moved the file {} to the folder {}, having a new name {}", multipartFile.getName(), folder, fileName);
@@ -104,6 +103,12 @@ public class MediaFacade {
         } catch (IOException ioException) {
             log.error("Error while moving the file {} to the folder {}", multipartFile.getName(), folder, ioException);
             throw new AppException(ioException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void checkFile(MultipartFile multipartFile) {
+        if(multipartFile == null || multipartFile.getSize() == 0 || multipartFile.getName().isEmpty()) {
+            throw new AppException("The file must not be null", HttpStatus.BAD_REQUEST);
         }
     }
 }
