@@ -33,9 +33,7 @@ public class AppExceptionConverter {
         validationExceptionDto.setHttpCode(HttpStatus.BAD_REQUEST.value());
         validationExceptionDto.setMessage(VALIDATION_EXCEPTION_MESSAGE);
         Map<String, String> fieldsWithErrors = new LinkedHashMap<>();
-        methodArgumentNotValidException.getBindingResult().getAllErrors().forEach(objectError -> {
-            populateMapWithError(fieldsWithErrors, objectError);
-        });
+        methodArgumentNotValidException.getBindingResult().getAllErrors().forEach(objectError -> populateMapWithError(fieldsWithErrors, objectError));
         validationExceptionDto.setFieldsWithErrors(fieldsWithErrors);
         validationExceptionDto.setThrownTime(LocalDateTime.now());
         return validationExceptionDto;
