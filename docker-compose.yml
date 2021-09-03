@@ -2,6 +2,6 @@ version: '3'
 services:
   media-service:
     container_name: codetech-media
-    build: /
+    build: .
     ports:
       - "8011:8081"
