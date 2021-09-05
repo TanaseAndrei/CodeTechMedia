@@ -96,12 +96,11 @@ public class MediaFacade {
     public String move(String folder, MultipartFile multipartFile) {
         try {
             checkFile(multipartFile);
-            log.info("Moving the file {} to the folder {}", multipartFile.getName(), folder);
             String fileName = fileService.moveFile(folder, multipartFile);
-            log.info("Moved the file {} to the folder {}, having a new name {}", multipartFile.getName(), folder, fileName);
+            log.info("Moved the file {} to the folder {}, having a new name {}", multipartFile.getOriginalFilename(), folder, fileName);
             return fileName;
         } catch (IOException ioException) {
-            log.error("Error while moving the file {} to the folder {}", multipartFile.getName(), folder, ioException);
+            log.error("Error while moving the file {} to the folder {}", multipartFile.getOriginalFilename(), folder, ioException);
             throw new AppException(ioException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
