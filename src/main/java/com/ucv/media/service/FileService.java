@@ -24,24 +24,28 @@ import java.util.UUID;
 public class FileService {
 
     private static final String SLASH = File.separator;
+    private static final String FOLDER_DOES_NOT_EXIST_LOG_MESSAGE = "The folder {} does not exist";
 
     @Value("${application.base-folder}")
     private String applicationBaseFolder;
 
-    public String createCourseFolder(String courseName) throws IOException {
-        log.info("Creating new course folder with the name {}", courseName);
-        if (folderExists(courseName)) {
-            Files.createDirectory(Paths.get(applicationBaseFolder + SLASH + courseName));
-            log.info("Created new course folder with the name {}", courseName);
-        } else {
-            log.info("The folder {} already exists", courseName);
+    public String createCourseFolder(String folder) throws IOException {
+        log.info("Creating new course folder with the name {}", folder);
+        if (folderExists(folder)) {
+            log.warn("The folder {} already exists", folder);
+            throw new AppException("The folder " + folder + " already exists", HttpStatus.BAD_REQUEST);
         }
-        return courseName;
+        Files.createDirectory(Paths.get(applicationBaseFolder + SLASH + folder));
+        log.info("Created new course folder with the name {}", folder);
+        return folder;
     }
 
     public String moveFile(String folder, MultipartFile multipartFile) throws IOException {
         log.info("Moving file with the name {} to the folder {}", multipartFile.getName(), folder);
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         byte[] fileBytes = multipartFile.getBytes();
         String newFilename = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         String savedFilePath = applicationBaseFolder + SLASH + folder + SLASH + newFilename;
@@ -52,7 +56,10 @@ public class FileService {
 
     public boolean renameFolder(String folder, String newName) {
         log.info("Renaming folder from {} to {}", folder, newName);
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         File targetFolder = new File(applicationBaseFolder + SLASH + folder);
         File newFolder = new File(applicationBaseFolder + SLASH + newName);
         log.info("Renamed folder from {} to {}", folder, newFolder);
@@ -60,7 +67,10 @@ public class FileService {
     }
 
     public void deleteFiles(String folder, List<String> fileNames) throws IOException {
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         checkIfFilesExistInFolder(folder, fileNames);
         log.info("Deleting files {} from the folder {}", fileNames, folder);
         for (String fileName : fileNames) {
@@ -70,30 +80,34 @@ public class FileService {
     }
 
     public void deleteFolder(String folder) throws IOException {
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         String pathname = applicationBaseFolder + SLASH + folder;
         FileUtils.deleteDirectory(new File(pathname));
+        log.info("Deleted the folder {}", folder);
     }
 
     public void deleteFile(String folder, String fileName) throws IOException {
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         checkIfFileExistsInFolder(folder, fileName);
         Files.delete(Paths.get(applicationBaseFolder + SLASH + folder + SLASH + fileName));
         log.info("Deleted file {} from the folder {}", fileName, folder);
     }
 
     public Resource getFileAsResource(String folder, String fileName) throws MalformedURLException {
-        checkIfFolderExists(folder);
+        if (!folderExists(folder)) {
+            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
+            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+        }
         checkIfFileExistsInFolder(folder, fileName);
         log.info("Retrieving file {} from the folder {}", fileName, folder);
         Path path = Paths.get(applicationBaseFolder + SLASH + folder + SLASH + fileName);
         return new UrlResource(path.toUri());
-    }
-
-    private void checkIfFileExistsInFolder(String folder, String fileName) {
-        if(!new File(applicationBaseFolder + SLASH + folder, fileName).exists()) {
-            throw new AppException("The file " + fileName + " does not exist in the folder " + folder, HttpStatus.NOT_FOUND);
-        }
     }
 
     private void checkIfFilesExistInFolder(String folder, List<String> fileNames) {
@@ -102,9 +116,9 @@ public class FileService {
         }
     }
 
-    private void checkIfFolderExists(String folder) {
-        if (!folderExists(folder)) {
-            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
+    private void checkIfFileExistsInFolder(String folder, String fileName) {
+        if (!new File(applicationBaseFolder + SLASH + folder, fileName).exists()) {
+            throw new AppException("The file " + fileName + " does not exist in the folder " + folder, HttpStatus.NOT_FOUND);
         }
     }
 
