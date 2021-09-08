@@ -29,7 +29,7 @@ public class MediaController implements MediaApi {
         return mediaFacade.createCourseFolder(courseFolderName);
     }
 
-    @PostMapping(path = "/folders/{folder}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/folders/{folder}/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public String uploadFile(@Valid @NotEmpty(message = "The target folder should not be null or empty") @PathVariable("folder") String folder,
                              @Valid @NotNull(message = "The file should not be null") @RequestParam("file") MultipartFile multipartFile) {
