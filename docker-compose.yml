@@ -5,3 +5,5 @@ services:
     build: .
     ports:
       - "8011:8081"
+    volumes:
+      - E:\Programming\CodeTechOutput:/home
