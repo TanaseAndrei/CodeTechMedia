@@ -74,12 +74,6 @@ public class MediaController implements MediaApi {
         mediaFacade.deleteFile(folder, filename);
     }
 
-    @DeleteMapping(path = "/folders/{folderName}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFolder(@Valid @NotEmpty(message = "The name of the folder should not be null or empty") @PathVariable("folderName") String folderName) {
-        mediaFacade.deleteFolder(folderName);
-    }
-
     private MediaType getMediaType(Resource resource) {
         return MediaTypeFactory.getMediaType(resource)
                 .orElseThrow(() -> new AppException("The media type could not be determined", HttpStatus.BAD_REQUEST));

@@ -93,13 +93,4 @@ public interface MediaApi {
     })
     void deleteFile(@Schema(description = "The target folder", example = "Java101") String folder,
                     @Schema(description = "The target filename", example = "Java101") String filename);
-
-    @ApiOperation(value = "Delete the given files from a targeted folder", httpMethod = "DELETE")
-    @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Deleted the given files", response = void.class),
-            @ApiResponse(code = 400, message = "The input is invalid", response = AppExceptionDto.class),
-            @ApiResponse(code = 404, message = "The target folder does not exist", response = AppExceptionDto.class),
-            @ApiResponse(code = 500, message = "Internal server error", response = void.class)
-    })
-    void deleteFolder(@Schema(description = "The target folder", example = "Java101") String folderName);
 }
