@@ -75,15 +75,6 @@ public class MediaFacade {
         return fileService.renameFolder(oldFolderName, newFolderName);
     }
 
-    public void deleteFolder(String folderName) {
-        try {
-            fileService.deleteFolder(folderName);
-        } catch (IOException ioException) {
-            log.error("Error while deleting the folder {}", folderName, ioException);
-            throw new AppException(ioException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     public String move(String folder, MultipartFile multipartFile) {
         try {
             checkFile(multipartFile);

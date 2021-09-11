@@ -2,7 +2,6 @@ package com.ucv.media.service;
 
 import com.ucv.media.controller.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -41,7 +40,7 @@ public class FileService {
     }
 
     public String moveFile(String folder, MultipartFile multipartFile) throws IOException {
-        log.info("Moving file with the name {} to the folder {}", multipartFile.getName(), folder);
+        log.info("Moving file with the name {} to the folder {}", multipartFile.getOriginalFilename(), folder);
         if (!folderExists(folder)) {
             log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
             throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
@@ -50,7 +49,7 @@ public class FileService {
         String newFilename = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         String savedFilePath = applicationBaseFolder + SLASH + folder + SLASH + newFilename;
         Files.write(Paths.get(savedFilePath), fileBytes);
-        log.info("Moved file with the name {} to the folder {}", multipartFile.getName(), folder);
+        log.info("Moved file with the name {} to the folder {}", multipartFile.getOriginalFilename(), folder);
         return newFilename;
     }
 
@@ -77,16 +76,6 @@ public class FileService {
             deleteFile(folder, fileName);
         }
         log.info("Successfully deleted files {} from the folder {}", fileNames, folder);
-    }
-
-    public void deleteFolder(String folder) throws IOException {
-        if (!folderExists(folder)) {
-            log.warn(FOLDER_DOES_NOT_EXIST_LOG_MESSAGE, folder);
-            throw new AppException("The folder " + folder + " does not exist", HttpStatus.NOT_FOUND);
-        }
-        String pathname = applicationBaseFolder + SLASH + folder;
-        FileUtils.deleteDirectory(new File(pathname));
-        log.info("Deleted the folder {}", folder);
     }
 
     public void deleteFile(String folder, String fileName) throws IOException {
